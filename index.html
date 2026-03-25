@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2D 美術與 AI 整合應用作品集</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;600&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #faf8f5;
+    --blush: #f0e8e0;
+    --mist: #e8e4f0;
+    --lavender: #c9c0dc;
+    --dusty-rose: #d4a8b0;
+    --charcoal: #2d2b35;
+    --mid: #6b6679;
+    --light: #9c98a8;
+    --accent: #a094c7;
+    --accent2: #c98fa0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--cream);
+    color: var(--charcoal);
+    font-family: 'Noto Sans TC', sans-serif;
+    font-weight: 300;
+    line-height: 1.8;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: rgba(250,248,245,0.88);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(201,192,220,0.25);
+    padding: 0 2.5rem;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .nav-logo {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    color: var(--mid);
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    color: var(--light);
+    text-decoration: none;
+    transition: color 0.25s;
+  }
+
+  .nav-links a:hover { color: var(--accent); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 6rem 2rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 70% 30%, rgba(201,192,220,0.22) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 40% at 25% 70%, rgba(212,168,176,0.18) 0%, transparent 65%);
+    pointer-events: none;
+  }
+
+  .hero-tag {
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.4rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s forwards;
+  }
+
+  .hero-title {
+    font-family: 'Noto Serif TC', serif;
+    font-size: clamp(2rem, 6vw, 4rem);
+    font-weight: 300;
+    line-height: 1.3;
+    letter-spacing: 0.04em;
+    color: var(--charcoal);
+    max-width: 640px;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.4s forwards;
+  }
+
+  .hero-title em {
+    font-style: normal;
+    color: var(--accent);
+  }
+
+  .hero-sub {
+    margin-top: 1.6rem;
+    font-size: 0.88rem;
+    color: var(--mid);
+    letter-spacing: 0.06em;
+    max-width: 480px;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.6s forwards;
+  }
+
+  .hero-divider {
+    margin: 3rem auto 0;
+    width: 40px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--lavender), transparent);
+    opacity: 0;
+    animation: fadeUp 0.9s 0.8s forwards;
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 2.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    color: var(--light);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    opacity: 0;
+    animation: fadeUp 1s 1.2s forwards;
+  }
+
+  .scroll-hint::after {
+    content: '';
+    width: 1px;
+    height: 30px;
+    background: linear-gradient(180deg, var(--lavender), transparent);
+    animation: scrollLine 1.8s ease-in-out infinite;
+  }
+
+  /* ── SECTION WRAPPER ── */
+  .section {
+    padding: 6rem 2rem;
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: 3rem;
+  }
+
+  .part-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .section-title {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 1.6rem;
+    font-weight: 400;
+    color: var(--charcoal);
+    letter-spacing: 0.06em;
+  }
+
+  .section-rule {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--blush), transparent);
+    margin-left: 0.5rem;
+  }
+
+  .section-note {
+    background: var(--blush);
+    border-left: 2px solid var(--lavender);
+    padding: 1rem 1.4rem;
+    font-size: 0.84rem;
+    color: var(--mid);
+    line-height: 1.7;
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 2.4rem;
+  }
+
+  /* ── CATEGORY CARDS ── */
+  .category-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.2rem;
+  }
+
+  .category-card {
+    background: #fff;
+    border: 1px solid rgba(201,192,220,0.3);
+    border-radius: 14px;
+    padding: 1.6rem 1.8rem;
+    transition: box-shadow 0.3s, transform 0.3s, border-color 0.3s;
+    cursor: default;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .category-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--lavender), var(--dusty-rose));
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .category-card:hover {
+    box-shadow: 0 8px 32px rgba(160,148,199,0.15);
+    transform: translateY(-3px);
+    border-color: rgba(201,192,220,0.6);
+  }
+
+  .category-card:hover::before { opacity: 1; }
+
+  .card-number {
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    color: var(--accent);
+    margin-bottom: 0.6rem;
+    display: block;
+  }
+
+  .card-title {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 1.05rem;
+    font-weight: 400;
+    color: var(--charcoal);
+    margin-bottom: 0.9rem;
+  }
+
+  .card-items {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .card-items li {
+    font-size: 0.8rem;
+    color: var(--mid);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .card-items li::before {
+    content: '';
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--lavender);
+    flex-shrink: 0;
+  }
+
+  /* ── PART 2 ── */
+  .part2-note {
+    background: rgba(201,192,220,0.1);
+    border-left: 2px solid var(--dusty-rose);
+  }
+
+  .ai-process {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .process-chip {
+    background: #fff;
+    border: 1px solid rgba(201,192,220,0.3);
+    border-radius: 10px;
+    padding: 1rem 1.2rem;
+    font-size: 0.8rem;
+    color: var(--mid);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .chip-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--lavender), var(--dusty-rose));
+    flex-shrink: 0;
+  }
+
+  .before-after-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 1.6rem;
+  }
+
+  .ba-card {
+    background: #fff;
+    border: 1px solid rgba(201,192,220,0.3);
+    border-radius: 14px;
+    padding: 1.4rem 1.4rem 1.2rem;
+    transition: box-shadow 0.3s, transform 0.3s;
+  }
+
+  .ba-card:hover {
+    box-shadow: 0 8px 28px rgba(160,148,199,0.15);
+    transform: translateY(-3px);
+  }
+
+  .ba-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.16em;
+    color: var(--accent2);
+    margin-bottom: 0.6rem;
+    display: block;
+  }
+
+  .ba-title {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 0.95rem;
+    color: var(--charcoal);
+    margin-bottom: 0.8rem;
+  }
+
+  .ba-visual {
+    height: 80px;
+    background: linear-gradient(135deg, var(--blush), var(--mist));
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    color: var(--light);
+    letter-spacing: 0.06em;
+  }
+
+  .ba-meta {
+    margin-top: 0.7rem;
+    font-size: 0.72rem;
+    color: var(--light);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid rgba(201,192,220,0.25);
+    padding: 3rem 2rem;
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--light);
+    letter-spacing: 0.1em;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes scrollLine {
+    0%, 100% { opacity: 0.3; transform: scaleY(1); }
+    50%       { opacity: 1;   transform: scaleY(1.3); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    .ai-process { grid-template-columns: 1fr; }
+    .before-after-grid { grid-template-columns: 1fr; }
+    .category-grid { grid-template-columns: 1fr; }
+    nav { padding: 0 1.2rem; }
+    .nav-links { gap: 1.2rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <span class="nav-logo">2D Art × AI</span>
+  <ul class="nav-links">
+    <li><a href="#part1">手繪作品</a></li>
+    <li><a href="#part2">AI 生成</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <p class="hero-tag">Portfolio · 作品集</p>
+  <h1 class="hero-title">2D 美術與 <em>AI</em><br>整合應用作品集</h1>
+  <p class="hero-sub">手繪創作 × AI 輔助生成 × 後製精修<br>以 CSP · ComfyUI · Gemini Nanobanana · Photoshop 構成完整流程</p>
+  <div class="hero-divider"></div>
+  <div class="scroll-hint">scroll</div>
+</section>
+
+<!-- PART 1 -->
+<section class="section" id="part1">
+  <div class="section-header reveal">
+    <span class="part-label">Part 1</span>
+    <h2 class="section-title">手繪作品</h2>
+    <div class="section-rule"></div>
+  </div>
+
+  <div class="section-note reveal">
+    使用 CSP 進行繪製，並無 AI 的輔助
+  </div>
+
+  <div class="category-grid">
+    <div class="category-card reveal">
+      <span class="card-number">01</span>
+      <h3 class="card-title">Icon</h3>
+      <ul class="card-items">
+        <li>Skill Icon</li>
+        <li>Food Icon</li>
+      </ul>
+    </div>
+
+    <div class="category-card reveal" style="transition-delay:0.08s">
+      <span class="card-number">02</span>
+      <h3 class="card-title">腳色設計</h3>
+      <ul class="card-items">
+        <li>腳色設計</li>
+        <li>服裝設計</li>
+      </ul>
+    </div>
+
+    <div class="category-card reveal" style="transition-delay:0.16s">
+      <span class="card-number">03</span>
+      <h3 class="card-title">角色立繪</h3>
+      <ul class="card-items">
+        <li>專案立繪</li>
+        <li>個人作品</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- DIVIDER -->
+<div style="max-width:860px;margin:0 auto;padding:0 2rem">
+  <div style="height:1px;background:linear-gradient(90deg,transparent,rgba(201,192,220,0.4),transparent)"></div>
+</div>
+
+<!-- PART 2 -->
+<section class="section" id="part2">
+  <div class="section-header reveal">
+    <span class="part-label">Part 2</span>
+    <h2 class="section-title">AI 生成與精修控制</h2>
+    <div class="section-rule"></div>
+  </div>
+
+  <div class="section-note part2-note reveal">
+    主要是 ComfyUI 與 Gemini Nanobanana 的複合型使用，使用 CSP 繪圖軟體進行後製修改，Photoshop 進行去背。<br>
+    <span style="margin-top:0.4rem;display:block;font-size:0.8rem;color:var(--light)">展示的立繪左側為 ComfyUI 原生草圖，右側為細修後完成圖。</span>
+  </div>
+
+  <div class="ai-process reveal">
+    <div class="process-chip"><span class="chip-dot"></span>ComfyUI — 生成草圖</div>
+    <div class="process-chip"><span class="chip-dot"></span>Gemini Nanobanana — 輔助控制</div>
+    <div class="process-chip"><span class="chip-dot"></span>CSP — 後製修改</div>
+    <div class="process-chip"><span class="chip-dot"></span>Photoshop — 去背處理</div>
+  </div>
+
+  <h3 style="font-family:'Noto Serif TC',serif;font-size:1rem;color:var(--charcoal);letter-spacing:0.06em;margin-bottom:1rem" class="reveal">
+    <span style="color:var(--accent);font-size:0.7rem;letter-spacing:0.18em;font-family:'Noto Sans TC',sans-serif;display:block;margin-bottom:0.3rem">AI生成前後比照圖</span>
+    腳色立繪
+  </h3>
+
+  <div class="before-after-grid">
+    <div class="ba-card reveal">
+      <span class="ba-label">Before / After</span>
+      <p class="ba-title">腳色立繪 A</p>
+      <div class="ba-visual">草圖 → 完成圖</div>
+      <p class="ba-meta">ComfyUI 生成 → CSP 精修</p>
+    </div>
+    <div class="ba-card reveal" style="transition-delay:0.08s">
+      <span class="ba-label">Before / After</span>
+      <p class="ba-title">腳色立繪 B</p>
+      <div class="ba-visual">草圖 → 完成圖</div>
+      <p class="ba-meta">ComfyUI 生成 → CSP 精修</p>
+    </div>
+    <div class="ba-card reveal" style="transition-delay:0.16s">
+      <span class="ba-label">Before / After</span>
+      <p class="ba-title">腳色立繪 C</p>
+      <div class="ba-visual">草圖 → 完成圖</div>
+      <p class="ba-meta">ComfyUI 生成 → CSP 精修</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>2D 美術與 AI 整合應用作品集 &nbsp;·&nbsp; Portfolio</p>
+</footer>
+
+<script>
+  // Intersection Observer for reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  reveals.forEach(r => observer.observe(r));
+</script>
+</body>
+</html>
